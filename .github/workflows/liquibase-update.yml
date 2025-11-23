@@ -1,0 +1,35 @@
+name: Liquibase Update
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  liquibase-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Download Liquibase
+        run: |
+          wget -q -O liquibase.tar.gz https://github.com/liquibase/liquibase/releases/download/v4.20.0/liquibase-4.20.0.tar.gz
+          tar -xzf liquibase.tar.gz
+          chmod +x liquibase
+      
+      - name: Run Liquibase Update
+        run: |
+          ./liquibase --changeLogFile=liquibase/changelog-master.xml update
+        env:
+          LIQUIBASE_COMMAND_URL: ${{ secrets.DATABASE_URL }}
+          LIQUIBASE_COMMAND_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          LIQUIBASE_COMMAND_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}

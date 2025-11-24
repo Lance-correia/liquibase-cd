@@ -22,13 +22,27 @@ jobs:
       
       - name: Download Liquibase
         run: |
-          wget -q -O liquibase.tar.gz https://github.com/liquibase/liquibase/releases/download/v4.20.0/liquibase-4.20.0.tar.gz
+          wget -q -O liquibase.tar.gz https://github.com/liquibase/liquibase/releases/download/v4.24.0/liquibase-4.24.0.tar.gz
           tar -xzf liquibase.tar.gz
           chmod +x liquibase
       
+      - name: Download PostgreSQL Driver
+        run: |
+          wget -q -O postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.7.0.jar
+          mkdir -p lib
+          mv postgresql.jar lib/
+      
+      - name: Validate Changelog
+        run: |
+          ./liquibase --changeLogFile=liquibase/changelog-master.xml \
+                      --classpath=lib/postgresql.jar \
+                      validate
+      
       - name: Run Liquibase Update
         run: |
-          ./liquibase --changeLogFile=liquibase/changelog-master.xml update
+          ./liquibase --changeLogFile=liquibase/changelog-master.xml \
+                      --classpath=lib/postgresql.jar \
+                      update
         env:
           LIQUIBASE_COMMAND_URL: ${{ secrets.DATABASE_URL }}
           LIQUIBASE_COMMAND_USERNAME: ${{ secrets.DATABASE_USERNAME }}

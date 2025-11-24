@@ -1,0 +1,24 @@
+# Liquibase Configuration Example
+# Copy this file to liquibase.properties and update with your values
+# Or use environment variables instead
+
+changeLogFile=liquibase/changelog-master.xml
+driver=org.postgresql.Driver
+
+# Connection (override with environment variables)
+# For local development:
+url=jdbc:postgresql://localhost:5432/myapp_dev
+username=postgres
+password=postgres
+
+# For production, use environment variables:
+# url=${LIQUIBASE_COMMAND_URL}
+# username=${LIQUIBASE_COMMAND_USERNAME}
+# password=${LIQUIBASE_COMMAND_PASSWORD}
+
+# Logging
+logLevel=INFO
+
+# Additional options
+# contexts=dev,staging
+# labels=feature1,feature2
